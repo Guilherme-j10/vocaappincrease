@@ -1,0 +1,1 @@
+export const ColorMain = '#8414a6';
