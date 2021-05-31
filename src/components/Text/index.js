@@ -20,7 +20,7 @@ const TextStringComponent = ({ methodGet, verifiedString }) => {
                 console.log('ta fazendo ainda');
               }
             }}>
-              <Text style={{color: '#ccc', fontSize: 15}} >{`${TextStringSplitted[i]} `}</Text>
+              <Text style={{color: '#666', fontSize: 15}} >{`${TextStringSplitted[i]} `}</Text>
             </TouchableOpacity>
           );
         }

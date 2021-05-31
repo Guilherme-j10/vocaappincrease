@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, Modal } from 'react-native';
 import TextString from '../../components/Text/index';
 import { ColorMain, BackgroundColor } from '../../utils/Constants';
 import Animated, { useAnimatedStyle, withTiming, useSharedValue, interpolate, Extrapolate } from 'react-native-reanimated';
 import { api } from '../../utils/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ContentModal from '../../components/SetTextModal/index';
 
 const Home = () => {
 
@@ -38,7 +40,7 @@ const Home = () => {
         word: Palavra
       });
       if(response.data){
-        setTextWord(response.data);
+        setTextWord(`${Palavra} - ${response.data}`);
         setTimeout(() => {
           setShowBox(false);
           setTextWord(null);
@@ -50,35 +52,39 @@ const Home = () => {
   }
 
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: '#111'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: BackgroundColor}}>
+      <View style={{
+        width: '100%',
+        paddingHorizontal: 25,
+        paddingVertical: 25,
+        paddingBottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>Vocal Increase</Text>
+        <TouchableOpacity style={{
+          backgroundColor: ColorMain,
+          paddingHorizontal: 10,
+          paddingVertical: 7,
+          width: 120,
+          borderRadius: 5,
+          justifyContent: 'center',
+          alignItems: 'center' 
+        }} onPress={() => {  ShowBox ? setShowBox(false) : setShowBox(true) }}>
+          <Text  style={{color: '#fff'}}>Load Text</Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
         paddingHorizontal: 25,
         paddingVertical: 25,
+        paddingTop: 0,
         paddingBottom: 80,
         backgroundColor: BackgroundColor,
       }}>
-        <View style={{
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: 40,
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          alignItems: 'center'
-        }}>
-          <Text style={{color: '#fff', fontSize: 18, fontWeight: 'bold'}}>Vocal Increase</Text>
-          <TouchableOpacity style={{
-            backgroundColor: ColorMain,
-            paddingHorizontal: 10,
-            paddingVertical: 7,
-            width: 120,
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center' 
-          }} onPress={() => {  ShowBox ? setShowBox(false) : setShowBox(true) }}>
-            <Text  style={{color: '#fff'}}>Load Text</Text>
-          </TouchableOpacity>
-        </View>
         <TextString methodGet={GetWordInformation} verifiedString={ShowBox} />
       </ScrollView>
 
@@ -107,7 +113,7 @@ const Home = () => {
           ) : (
             <>
               <ActivityIndicator color="#fff" size="small" />
-              <Text style={{marginLeft: 10, color: '#fff'}}>Buscado palavra...</Text>
+              <Text style={{marginLeft: 10, color: '#fff'}}>Buscando palavra...</Text>
             </>
           )}
         </View>
@@ -127,6 +133,14 @@ const Home = () => {
       }} >
         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 15}} >Tx</Text>
       </TouchableOpacity>
+
+      <Modal 
+        animationType="fade"
+        transparent={true}
+        visible={true}
+      >
+        <ContentModal />
+      </Modal>
     </SafeAreaView>
   );
 }
