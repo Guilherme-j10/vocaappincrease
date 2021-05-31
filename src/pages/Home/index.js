@@ -1,16 +1,61 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
 import TextString from '../../components/Text/index';
-import { ColorMain } from '../../utils/Constants';
+import { ColorMain, BackgroundColor } from '../../utils/Constants';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue, interpolate, Extrapolate } from 'react-native-reanimated';
+import { api } from '../../utils/api';
 
 const Home = () => {
+
+  const [ ShowBox, setShowBox ] = useState(false);
+  const [ TextWord, setTextWord ] = useState(null);
+  const Position = useSharedValue(70);
+
+  useEffect(() => {
+    if(ShowBox){
+      Position.value = 0;
+    }else{
+      Position.value = 70;
+    }
+  }, [ShowBox]);
+
+  const ShownAnimation = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: withTiming(Position.value, { duration: 100 }) }],
+      opacity: interpolate(
+        Position.value,
+        [70, 35, 0],
+        [0, 1, 1],
+        Extrapolate.CLAMP
+      )
+    };
+  })
+
+  const GetWordInformation = async (Palavra) => {
+    setShowBox(true);
+    try {
+      const response = await api.post('/translate', {
+        word: Palavra
+      });
+      if(response.data){
+        setTextWord(response.data);
+        setTimeout(() => {
+          setShowBox(false);
+          setTextWord(null);
+        }, 3000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: '#111'}}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
         paddingHorizontal: 25,
         paddingVertical: 25,
-        paddingBottom: 65,
-        backgroundColor: '#111',
+        paddingBottom: 80,
+        backgroundColor: BackgroundColor,
       }}>
         <View style={{
           width: '100%',
@@ -30,12 +75,43 @@ const Home = () => {
             borderRadius: 5,
             justifyContent: 'center',
             alignItems: 'center' 
-          }}>
+          }} onPress={() => {  ShowBox ? setShowBox(false) : setShowBox(true) }}>
             <Text  style={{color: '#fff'}}>Load Text</Text>
           </TouchableOpacity>
         </View>
-        <TextString />
+        <TextString methodGet={GetWordInformation} verifiedString={ShowBox} />
       </ScrollView>
+
+      <Animated.View style={[{
+        bottom: 15,
+        left: 25,
+        height: 50,
+        width: '75%',
+        position: 'absolute',
+        alignSelf: 'flex-end',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        backgroundColor: ColorMain,
+        borderRadius: 5,
+        alignItems: 'flex-start',
+        justifyContent: 'center'
+      }, ShownAnimation]}>
+        <View style={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}>
+          {TextWord ? (
+            <Text style={{marginLeft: 10, color: '#fff'}}>{TextWord}</Text>
+          ) : (
+            <>
+              <ActivityIndicator color="#fff" size="small" />
+              <Text style={{marginLeft: 10, color: '#fff'}}>Buscado palavra...</Text>
+            </>
+          )}
+        </View>
+      </Animated.View>
 
       <TouchableOpacity style={{
         backgroundColor: ColorMain,
