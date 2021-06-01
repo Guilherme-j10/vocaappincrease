@@ -12,6 +12,7 @@ const Home = () => {
   const [ ShowBox, setShowBox ] = useState(false);
   const [ TextWord, setTextWord ] = useState(null);
   const Position = useSharedValue(70);
+  const [ ShowModal, setShowModal ] = useState(false);
 
   useEffect(() => {
     if(ShowBox){
@@ -31,7 +32,7 @@ const Home = () => {
         Extrapolate.CLAMP
       )
     };
-  })
+  });
 
   const GetWordInformation = async (Palavra) => {
     setShowBox(true);
@@ -49,7 +50,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: BackgroundColor}}>
@@ -74,7 +75,7 @@ const Home = () => {
           borderRadius: 5,
           justifyContent: 'center',
           alignItems: 'center' 
-        }} onPress={() => {  ShowBox ? setShowBox(false) : setShowBox(true) }}>
+        }} onPress={() => {  setShowModal(true) }}>
           <Text  style={{color: '#fff'}}>Load Text</Text>
         </TouchableOpacity>
       </View>
@@ -135,11 +136,11 @@ const Home = () => {
       </TouchableOpacity>
 
       <Modal 
-        animationType="fade"
+        animationType="slide"
         transparent={true}
-        visible={true}
+        visible={ShowModal}
       >
-        <ContentModal />
+        <ContentModal setShowModal={setShowModal} />
       </Modal>
     </SafeAreaView>
   );
