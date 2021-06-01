@@ -2,10 +2,11 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { ColorMain } from './src/utils/Constants';
 import { TextProvider } from './src/context/TextProvider';
 import HomeScreen from './src/pages/Home/index';
+import MeansScreen from './src/pages/Means/index';
 
 const Stack  = createStackNavigator();
 
@@ -16,9 +17,11 @@ export default function App() {
       <TextProvider>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{
-            headerShown: false
+            headerShown: false,
+            ...TransitionPresets.SlideFromRightIOS
           }}>
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Means" component={MeansScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </TextProvider>

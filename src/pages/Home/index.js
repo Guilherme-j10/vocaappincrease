@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, Modal } from 'react-native';
 import TextString from '../../components/Text/index';
 import { ColorMain, BackgroundColor } from '../../utils/Constants';
-import Animated, { useAnimatedStyle, withTiming, useSharedValue, interpolate, Extrapolate } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue, interpolate, Extrapolate, color } from 'react-native-reanimated';
 import { api } from '../../utils/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import ContentModal from '../../components/SetTextModal/index';
+import { TextContext } from '../../context/TextProvider';
 
-const Home = () => {
+const Home = ({ navigation }) => {
 
   const [ ShowBox, setShowBox ] = useState(false);
   const [ TextWord, setTextWord ] = useState(null);
   const Position = useSharedValue(70);
   const [ ShowModal, setShowModal ] = useState(false);
+  const [ x, z, SaveInfotmation, Provisinament, StillHidden, setStillHidden ] = useContext(TextContext);
 
   useEffect(() => {
     if(ShowBox){
@@ -35,20 +36,26 @@ const Home = () => {
   });
 
   const GetWordInformation = async (Palavra) => {
-    setShowBox(true);
-    try {
-      const response = await api.post('/translate', {
-        word: Palavra
-      });
-      if(response.data){
-        setTextWord(`${Palavra} - ${response.data}`);
-        setTimeout(() => {
-          setShowBox(false);
-          setTextWord(null);
-        }, 3000);
+    if(!ShowBox){
+      setShowBox(true);
+      try {
+        const response = await api.post('/translate', {
+          word: Palavra
+        });
+        if(response.data){
+          setTextWord(`${Palavra} - ${response.data}`);
+          SaveInfotmation({
+            word: Palavra,
+            mean: response.data
+          });
+          setTimeout(() => {
+            setShowBox(false);
+            setTextWord(null);
+          }, 3000);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -66,7 +73,7 @@ const Home = () => {
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>Vocal Increase</Text>
+        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>Voca Increase</Text>
         <TouchableOpacity style={{
           backgroundColor: ColorMain,
           paddingHorizontal: 10,
@@ -93,7 +100,7 @@ const Home = () => {
         bottom: 15,
         left: 25,
         height: 50,
-        width: '75%',
+        width: '73.5%',
         position: 'absolute',
         alignSelf: 'flex-end',
         paddingHorizontal: 10,
@@ -131,7 +138,13 @@ const Home = () => {
         right: 15,
         bottom: 15,
         alignSelf: 'flex-end',
-      }} >
+      }} onPress={() => {
+        navigation.navigate('Means');
+        setStillHidden(0);
+      }}>
+        <View style={{position: 'absolute', borderColor: '#fff', borderWidth: 2, top: -10, right: 0, width: 23, borderRadius: 50, justifyContent: 'center', alignItems: 'center', height: 23, backgroundColor: ColorMain }}>
+          <Text style={{color: '#fff'}}>{StillHidden}</Text>
+        </View>
         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 15}} >Tx</Text>
       </TouchableOpacity>
 

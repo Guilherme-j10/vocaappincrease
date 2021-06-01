@@ -44,10 +44,13 @@ const SetTextModal = ({ setShowModal }) => {
     }}>
       <View style={{
         width: '90%',
+        maxHeight: keyboardStatus ? '90%' : '80%',
         paddingVertical: 20,
         paddingHorizontal: 20,
         backgroundColor: '#fff',
-        borderRadius: 5
+        borderRadius: 5,
+        justifyContent: 'space-between',
+        alignItems: 'center'
       }}>
         <View style={{
           width: '100%',
@@ -64,19 +67,20 @@ const SetTextModal = ({ setShowModal }) => {
             width: '100%',
             borderColor: '#ccc',
             borderWidth: 1,
-            height: keyboardStatus ? 350 : 600,
+            height: keyboardStatus ? '73%' : '80%',
             borderRadius: 3,
             paddingHorizontal: 10,
             paddingVertical: 10
           }} 
           multiline={true}
           textAlignVertical="top"
-          onChangeText={(e) => { setTextOfInput(e); console.log(e); }}
+          onChangeText={(e) => { setTextOfInput(e); }}
           value={TextOfInput}
         />
         <TouchableOpacity style={{
+          width: '100%',
           backgroundColor: ColorMain,
-          height: 45,
+          height: keyboardStatus ? '13%' : '8%',
           paddingVertical: 10,
           justifyContent: 'center',
           alignItems: 'center',
