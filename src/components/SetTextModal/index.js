@@ -5,33 +5,61 @@ import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextContext } from '../../context/TextProvider';
 
-const SetTextModal = ({ setShowModal }) => {
+const SetTextModal = ({ setShowModal, dados, setDados }) => {
 
   const [ keyboardStatus, setKeyboardStatus ] = useState(false);
-  const [ TextContentToShow, update ] = useContext(TextContext);
+  const [ g, h, r, t, y, u, i, SaveTextOnList, w, z, UpdateTextOnly ] = useContext(TextContext);
   const [ TextOfInput, setTextOfInput ] = useState('');
+  const [ TitleInput, setTitleInput ] = useState('');
   const [ LoadMakeText, setLoadMakeText ] = useState(false);
 
   useEffect(() => {
-    setTextOfInput(TextContentToShow.join(' '))
+    if(dados){
+      setTextOfInput(dados.text);
+      setTitleInput(dados.title);
+    }
+
     Keyboard.addListener("keyboardDidShow", () => { 
       setKeyboardStatus(true);
     }); 
     Keyboard.addListener("keyboardDidHide", () => {
       setKeyboardStatus(false);
     });
+
+    return () => {
+      Keyboard.removeAllListeners("keyboardDidShow", () => { 
+        setKeyboardStatus(true);
+      }); 
+      Keyboard.removeAllListeners("keyboardDidHide", () => {
+        setKeyboardStatus(false);
+      });
+    }
   }, []);
 
   const saveTextonSystem = async () => {
     setLoadMakeText(true);
-    try {
-      await AsyncStorage.setItem('TextInputSystem', TextOfInput ? TextOfInput : ' ');
-      setLoadMakeText(false);
-      setShowModal(false);
-      update();
-    } catch (error) {
-      console.log(error);
+    if(dados){
+      UpdateTextOnly({
+        index: dados.index,
+        title: TitleInput,
+        text: TextOfInput
+      }, () => {
+        setLoadMakeText(false);
+        setShowModal(false);
+        setDados(null);
+      });
+    }else{
+      SaveTextOnList({
+        title: TitleInput,
+        text: TextOfInput
+      }, () => {
+        setLoadMakeText(false);
+        setTextOfInput('');
+        setTitleInput('');
+        setShowModal(false);
+      });
     }
+    
   }
 
   return(
@@ -62,12 +90,26 @@ const SetTextModal = ({ setShowModal }) => {
           <Text style={{color: '#444', fontWeight: 'bold', fontSize: 18}}>Load the text</Text>
           <FontAwesome name="times" size={24} color="black" onPress={() => { setShowModal(false) }} />
         </View>
+        <TextInput 
+          style={{
+            width: '100%',
+            borderColor: '#ccc',
+            borderWidth: 1,
+            marginBottom: 15,
+            borderRadius: 3,
+            paddingHorizontal: 10,
+            paddingVertical: 10
+          }}
+          placeholder="Type on here the title text"
+          onChangeText={(e) => setTitleInput(e)}
+          value={TitleInput}
+        />
         <TextInput
           style={{
             width: '100%',
             borderColor: '#ccc',
             borderWidth: 1,
-            height: keyboardStatus ? '73%' : '80%',
+            height: keyboardStatus ? '57%' : '72.5%',
             borderRadius: 3,
             paddingHorizontal: 10,
             paddingVertical: 10
@@ -76,6 +118,7 @@ const SetTextModal = ({ setShowModal }) => {
           textAlignVertical="top"
           onChangeText={(e) => { setTextOfInput(e); }}
           value={TextOfInput}
+          placeholder="Type on here the text"
         />
         <TouchableOpacity style={{
           width: '100%',

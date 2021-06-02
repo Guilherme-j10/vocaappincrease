@@ -7,6 +7,7 @@ export const TextProvider = ({ children }) => {
   const [ TextContentToShow, setTextContentToShow ] = useState([]);
   const [ Provisinament, setProvisinament ] = useState([]);
   const [ StillHidden, setStillHidden ] = useState(0);
+  const [ AllTexts, setAllTexts ] = useState([]);
 
   const UpdateText = async () => {
     try {
@@ -52,7 +53,70 @@ export const TextProvider = ({ children }) => {
   const GetInfomationWords = async () => {
     try {
       const value = await AsyncStorage.getItem('InformationWords');
-      setProvisinament(JSON.parse(value).reverse());
+      if(value){
+        setProvisinament(JSON.parse(value).reverse());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const SaveTextOnList = async (ObjTextToSave, CallBack) => {
+    try {
+      const getTextToSave = await AsyncStorage.getItem('TextOnSystem');
+      if(!getTextToSave){
+        await AsyncStorage.setItem('TextOnSystem', JSON.stringify([ObjTextToSave]))
+        CallBack();
+      }else{
+        let oldInformation = JSON.parse(getTextToSave);
+        oldInformation.push(ObjTextToSave);
+        await AsyncStorage.setItem('TextOnSystem', JSON.stringify(oldInformation));
+        CallBack();
+      }
+
+      GetTextOnSystem();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const RemoveTextFromIndex = async (Index, CallBack) => {
+    try {
+      const values = JSON.parse(await AsyncStorage.getItem('TextOnSystem')).reverse();
+      values.splice(Index, 1);
+      await AsyncStorage.setItem('TextOnSystem', JSON.stringify(values.reverse()));
+      setTimeout(() => {
+        GetTextOnSystem();
+        CallBack();
+      }, 1000)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const UpdateTextOnly = async (Dados, CallBack) => {
+    try {
+      const getValueOfIndex = JSON.parse(await AsyncStorage.getItem('TextOnSystem')).reverse();
+      getValueOfIndex[Dados.index] = {
+        title: Dados.title,
+        text: Dados.text
+      };
+      await AsyncStorage.setItem('TextOnSystem', JSON.stringify(getValueOfIndex.reverse()));
+      setTimeout(() => {
+        GetTextOnSystem();
+        CallBack();
+      }, 500)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const GetTextOnSystem = async () => {
+    try {
+      const getValue = JSON.parse(await AsyncStorage.getItem('TextOnSystem')).reverse();
+      if(getValue){
+        setAllTexts(getValue);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -61,6 +125,14 @@ export const TextProvider = ({ children }) => {
   useEffect(() => {
     UpdateText();
     GetInfomationWords();
+    GetTextOnSystem();
+
+    return () => {
+      setAllTexts([]);
+      setStillHidden(0);
+      setProvisinament([]);
+      setTextContentToShow([]);
+    }
   }, [])
 
   return(
@@ -71,7 +143,11 @@ export const TextProvider = ({ children }) => {
       Provisinament,
       StillHidden,
       setStillHidden,
-      RemoveTranslate
+      RemoveTranslate,
+      SaveTextOnList,
+      AllTexts,
+      RemoveTextFromIndex,
+      UpdateTextOnly
     ]}>  
       {children}
     </TextContext.Provider>

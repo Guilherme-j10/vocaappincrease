@@ -7,13 +7,14 @@ import { api } from '../../utils/api';
 import ContentModal from '../../components/SetTextModal/index';
 import { TextContext } from '../../context/TextProvider';
 
-const Home = ({ navigation }) => {
+const Home = ({ route, navigation }) => {
 
   const [ ShowBox, setShowBox ] = useState(false);
   const [ TextWord, setTextWord ] = useState(null);
   const Position = useSharedValue(70);
   const [ ShowModal, setShowModal ] = useState(false);
   const [ x, z, SaveInfotmation, Provisinament, StillHidden, setStillHidden ] = useContext(TextContext);
+  const { dados } = route.params;
 
   useEffect(() => {
     if(ShowBox){
@@ -69,22 +70,11 @@ const Home = ({ navigation }) => {
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>Voca Increase</Text>
-        <TouchableOpacity style={{
-          backgroundColor: ColorMain,
-          paddingHorizontal: 10,
-          paddingVertical: 7,
-          width: 120,
-          borderRadius: 5,
-          justifyContent: 'center',
-          alignItems: 'center' 
-        }} onPress={() => {  setShowModal(true) }}>
-          <Text  style={{color: '#fff'}}>Load Text</Text>
-        </TouchableOpacity>
+        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>{dados.title}</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
         paddingHorizontal: 25,
@@ -93,7 +83,7 @@ const Home = ({ navigation }) => {
         paddingBottom: 80,
         backgroundColor: BackgroundColor,
       }}>
-        <TextString methodGet={GetWordInformation} verifiedString={ShowBox} />
+        <TextString methodGet={GetWordInformation} TextContent={dados.text} />
       </ScrollView>
 
       <Animated.View style={[{
@@ -147,14 +137,6 @@ const Home = ({ navigation }) => {
         </View>
         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 15}} >Tx</Text>
       </TouchableOpacity>
-
-      <Modal 
-        animationType="slide"
-        transparent={true}
-        visible={ShowModal}
-      >
-        <ContentModal setShowModal={setShowModal} />
-      </Modal>
     </SafeAreaView>
   );
 }
