@@ -58,8 +58,7 @@ const TextsComponents = ({ navigation }) => {
   const Theme = useContext(ThemeContext);
 
   const EditMethod = (ObjToSedn) => {
-    setInfortmationText(ObjToSedn);
-    setShowModal(true);
+    navigation.navigate('SaveText', {ObjToSedn})
   }
 
   const RedirectTo = (dados) => {
@@ -104,19 +103,7 @@ const TextsComponents = ({ navigation }) => {
           <ComponentText key={index} index={index} dados={dados} edit={EditMethod} Redirect={RedirectTo} />
         ))}
       </ScrollView>
-
-      {/* trocar para o modal do pacote */}
-      <Modal 
-        animationType="fade"
-        transparent={true}
-        visible={ShowModal}
-        hardwareAccelerated={true}
-        statusBarTranslucent={true}
-      >
-        <ContentModal setShowModal={setShowModal} dados={InfortmationText} setDados={setInfortmationText} />
-      </Modal>
-
-      {/* BOTÃO PARA ADICIONAR UM TEXTO */}
+      
       <TouchableOpacity style={{
         position: 'absolute',
         alignSelf: 'flex-end',
@@ -128,7 +115,7 @@ const TextsComponents = ({ navigation }) => {
         backgroundColor: ColorMain,
         justifyContent: 'center',
         alignItems: 'center'
-      }} onPress={() => { setShowModal(true) }}>
+      }} onPress={() => { navigation.navigate('SaveText') }}>
         <Entypo name="plus" size={24} color="white" />
       </TouchableOpacity>
     </SafeAreaView>

@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { TextContext } from '../../context/TextProvider';
 import { ColorMain } from '../../utils/Constants';
 
-const TextStringComponent = ({ methodGet, TextContent }) => {
+const TextStringComponent = ({ methodGet, TextContent, theme }) => {
 
   const [ Content, l, k, Provisinament ] = useContext(TextContext);
 
@@ -23,7 +23,7 @@ const TextStringComponent = ({ methodGet, TextContent }) => {
               }else{
                 return false;
               }
-            })() ? ColorMain : '#666', fontSize: 15}} key={z} onPress={() => { methodGet(TextContent[z]) }} >
+            })() ? ColorMain : theme ? '#fff' : '#666', fontSize: 15}} key={z} onPress={() => { methodGet(TextContent[z]) }} >
               {`${TextContent[z]} `}
             </Text>
           );

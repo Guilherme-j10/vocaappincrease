@@ -4,11 +4,12 @@ import TextString from '../../components/Text/index';
 import { ColorMain, BackgroundColor } from '../../utils/Constants';
 import Animated, { useAnimatedStyle, withTiming, useSharedValue, interpolate, Extrapolate, color } from 'react-native-reanimated';
 import { api } from '../../utils/api';
-import ContentModal from '../../components/SetTextModal/index';
+import { ThemeContext } from '../../context/ThemeContext';
 import { TextContext } from '../../context/TextProvider';
 
 const Home = ({ route, navigation }) => {
 
+  const Theme = useContext(ThemeContext);
   const [ ShowBox, setShowBox ] = useState(false);
   const [ TextWord, setTextWord ] = useState(null);
   const Position = useSharedValue(70);
@@ -61,7 +62,7 @@ const Home = ({ route, navigation }) => {
   };
 
   return(
-    <SafeAreaView style={{flex: 1, backgroundColor: BackgroundColor}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Theme ? '#000' : BackgroundColor}}>
       <View style={{
         width: '100%',
         paddingHorizontal: 25,
@@ -74,16 +75,16 @@ const Home = ({ route, navigation }) => {
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-        <Text style={{color: '#444', fontSize: 20, fontWeight: 'bold'}}>{dados.title}</Text>
+        <Text style={{color: Theme ? '#fff' : '#444', fontSize: 20, fontWeight: 'bold'}}>{dados.title}</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
         paddingHorizontal: 25,
         paddingVertical: 25,
         paddingTop: 0,
         paddingBottom: 80,
-        backgroundColor: BackgroundColor,
+        backgroundColor: Theme ? '#000' : BackgroundColor,
       }}>
-        <TextString methodGet={GetWordInformation} TextContent={dados.text} />
+        <TextString methodGet={GetWordInformation} theme={Theme} TextContent={dados.text} />
       </ScrollView>
 
       <Animated.View style={[{
@@ -132,7 +133,7 @@ const Home = ({ route, navigation }) => {
         navigation.navigate('Means');
         setStillHidden(0);
       }}>
-        <View style={{position: 'absolute', borderColor: '#fff', borderWidth: 2, top: -10, right: 0, width: 23, borderRadius: 50, justifyContent: 'center', alignItems: 'center', height: 23, backgroundColor: ColorMain }}>
+        <View style={{position: 'absolute', borderColor: Theme ? '#000' : '#fff', borderWidth: 2, top: -10, right: 0, width: 23, borderRadius: 50, justifyContent: 'center', alignItems: 'center', height: 23, backgroundColor: ColorMain }}>
           <Text style={{color: '#fff'}}>{StillHidden}</Text>
         </View>
         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 15}} >Tx</Text>

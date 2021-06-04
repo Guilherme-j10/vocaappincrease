@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'rea
 import { BackgroundColor, ColorMain } from '../../utils/Constants';
 import { TextContext } from '../../context/TextProvider';
 import { FontAwesome } from '@expo/vector-icons';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const Line = ({ dados, index }) => {
 
@@ -43,11 +44,12 @@ const Line = ({ dados, index }) => {
 const Means = () => {
 
   const [ x, z, t, Provisinament, h, j, RemoveTranslate ] = useContext(TextContext);
+  const Theme = useContext(ThemeContext);
 
   return(
     <View style={{
       flex: 1,
-      backgroundColor: BackgroundColor
+      backgroundColor: Theme ? '#000' : BackgroundColor
     }}>
       <View style={{
         width: '100%',
@@ -57,7 +59,7 @@ const Means = () => {
         alignItems: 'center',
         marginBottom: 15
       }}>
-        <Text style={{fontWeight: 'bold', color: '#444', fontSize: 20}} >Means of the word</Text>
+        <Text style={{fontWeight: 'bold', color: Theme ? '#fff' : '#444', fontSize: 20}} >Means of the word</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
         paddingHorizontal: 20,

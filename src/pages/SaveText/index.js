@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Keyboard, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'; 
+import { View, SafeAreaView, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'; 
 import { ColorMain } from '../../utils/Constants';
 import { FontAwesome } from '@expo/vector-icons';
 import { TextContext } from '../../context/TextProvider';
 import { ThemeContext } from '../../context/ThemeContext';
 
-const SetTextModal = ({ setShowModal, dados, setDados }) => {
+const SetTextModal = ({ route, navigation, setShowModal, dados }) => {
 
   const Theme = useContext(ThemeContext);
   const [ keyboardStatus, setKeyboardStatus ] = useState(false);
@@ -13,41 +13,25 @@ const SetTextModal = ({ setShowModal, dados, setDados }) => {
   const [ TextOfInput, setTextOfInput ] = useState('');
   const [ TitleInput, setTitleInput ] = useState('');
   const [ LoadMakeText, setLoadMakeText ] = useState(false);
+  const Dados = route.params;
 
   useEffect(() => {
-    if(dados){
-      setTextOfInput(dados.text);
-      setTitleInput(dados.title);
-    }
-
-    Keyboard.addListener("keyboardDidShow", () => { 
-      setKeyboardStatus(true);
-    }); 
-    Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardStatus(false);
-    });
-
-    return () => {
-      Keyboard.removeAllListeners("keyboardDidShow", () => { 
-        setKeyboardStatus(true);
-      }); 
-      Keyboard.removeAllListeners("keyboardDidHide", () => {
-        setKeyboardStatus(false);
-      });
+    if(Dados){
+      setTextOfInput(Dados.ObjToSedn.text);
+      setTitleInput(Dados.ObjToSedn.title);
     }
   }, []);
 
   const saveTextonSystem = async () => {
     setLoadMakeText(true);
-    if(dados){
+    if(Dados){
       UpdateTextOnly({
-        index: dados.index,
+        index: Dados.ObjToSedn.index,
         title: TitleInput,
         text: TextOfInput
       }, () => {
         setLoadMakeText(false);
-        setShowModal(false);
-        setDados(null);
+        navigation.goBack();
       });
     }else{
       SaveTextOnList({
@@ -57,74 +41,75 @@ const SetTextModal = ({ setShowModal, dados, setDados }) => {
         setLoadMakeText(false);
         setTextOfInput('');
         setTitleInput('');
-        setShowModal(false);
+        navigation.goBack();
       });
     }
     
   }
 
   return(
-    <View style={{
+    <SafeAreaView style={{
       width: '100%',
-      backgroundColor: '#1111112d',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flex: 1
+      backgroundColor: Theme ? '#000' : '#fff',
+      flex: 1,
+      paddingVertical: 25,
+      paddingHorizontal: 25
     }}>
       <View style={{
-        width: '90%',
-        maxHeight: keyboardStatus ? '90%' : '80%',
-        paddingVertical: 20,
-        paddingHorizontal: 20,
-        backgroundColor: Theme ? '#222' : '#fff',
-        borderRadius: 5,
-        justifyContent: 'space-between',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 30
+      }}>
+        <Text style={{
+          fontWeight: 'bold',
+          color: Theme ? '#fff' : '#444',
+          fontSize: 20
+        }}>Load Text</Text>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
+        width: '100%',
+        justifyContent: 'flex-start',
         alignItems: 'center'
       }}>
-        <View style={{
-          width: '100%',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 20
-        }}>
-          <Text style={{color: Theme ? '#fff' : '#444', fontWeight: 'bold', fontSize: 18}}>Load the text</Text>
-          <FontAwesome name="times" size={24} color={Theme ? '#fff' : '#444'} onPress={() => { setShowModal(false) }} />
-        </View>
         <TextInput 
           style={{
             width: '100%',
-            borderColor: '#ccc',
+            borderColor: Theme ? '#333' : '#ccc',
             borderWidth: 1,
             marginBottom: 15,
             borderRadius: 3,
             paddingHorizontal: 10,
-            paddingVertical: 10
+            paddingVertical: 10,
+            color: Theme ? '#fff' : '#555'
           }}
           placeholder="Type on here the title text"
+          placeholderTextColor={Theme ? '#ccc' : '#666'}
           onChangeText={(e) => setTitleInput(e)}
           value={TitleInput}
         />
         <TextInput
           style={{
             width: '100%',
-            borderColor: '#ccc',
+            borderColor: Theme ? '#333' : '#ccc',
             borderWidth: 1,
-            height: keyboardStatus ? '57%' : '72.5%',
+            height: 520,
             borderRadius: 3,
             paddingHorizontal: 10,
-            paddingVertical: 10
+            paddingVertical: 10,
+            color: Theme ? '#fff' : '#555'
           }} 
           multiline={true}
           textAlignVertical="top"
           onChangeText={(e) => { setTextOfInput(e); }}
           value={TextOfInput}
+          placeholderTextColor={Theme ? '#ccc' : '#666'}
           placeholder="Type on here the text"
-        />
+        /> 
         <TouchableOpacity style={{
           width: '100%',
           backgroundColor: ColorMain,
-          height: keyboardStatus ? '13%' : '8%',
+          height: 50,
           paddingVertical: 10,
           justifyContent: 'center',
           alignItems: 'center',
@@ -137,8 +122,8 @@ const SetTextModal = ({ setShowModal, dados, setDados }) => {
             <Text style={{color: '#fff', fontWeight: 'bold'}}>Set up text</Text>
           )}
         </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
