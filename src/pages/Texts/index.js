@@ -105,6 +105,7 @@ const TextsComponents = ({ navigation }) => {
         ))}
       </ScrollView>
 
+      {/* trocar para o modal do pacote */}
       <Modal 
         animationType="fade"
         transparent={true}
