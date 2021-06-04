@@ -1,18 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, useColorScheme } from 'react-native';
 
 export const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   
-  const colorScheme = Appearance.getColorScheme();
+  const colorScheme = useColorScheme();
   const [ ThemeContextColor, setThemeContextColor ] = useState(false);
 
   useEffect(() => {
-    if(colorScheme === 'dark'){
+    if(colorScheme == 'dark'){
       setThemeContextColor(true);
     }
-
-    setThemeContextColor(false);
   }, [])
 
   return(

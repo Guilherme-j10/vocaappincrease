@@ -2,6 +2,7 @@
   "expo": {
     "name": "Voca Increase",
     "slug": "vocapp",
+    "userInterfaceStyle": "automatic",
     "backgroundColor": "#000000",
     "version": "1.0.0",
     "orientation": "portrait",
