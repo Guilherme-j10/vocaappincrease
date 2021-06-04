@@ -5,6 +5,7 @@ import { Entypo } from '@expo/vector-icons';
 import ContentModal from '../../components/SetTextModal/index';
 import { TextContext } from '../../context/TextProvider';
 import { FontAwesome } from '@expo/vector-icons';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const ComponentText = ({ index, dados, edit, Redirect }) => {
   
@@ -54,6 +55,7 @@ const TextsComponents = ({ navigation }) => {
   const [ ShowModal, setShowModal ] = useState(false);
   const [ f, g, h, j, t, y, u, p, AllTexts ] = useContext(TextContext);
   const [ InfortmationText, setInfortmationText ] = useState(null);
+  const Theme = useContext(ThemeContext);
 
   const EditMethod = (ObjToSedn) => {
     setInfortmationText(ObjToSedn);
@@ -67,7 +69,7 @@ const TextsComponents = ({ navigation }) => {
   return(
     <SafeAreaView style={{
       flex: 1,
-      backgroundColor: BackgroundColor,
+      backgroundColor: Theme ? '#000' : BackgroundColor,
       paddingHorizontal: 25,
       paddingVertical: 25
     }}>
@@ -78,7 +80,7 @@ const TextsComponents = ({ navigation }) => {
       }}>
         <Text style={{
           fontWeight: 'bold',
-          color: '#444',
+          color: Theme ? '#fff' : '#444',
           fontSize: 20
         }}>Voca Increase</Text>
       </View>
@@ -104,9 +106,11 @@ const TextsComponents = ({ navigation }) => {
       </ScrollView>
 
       <Modal 
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={ShowModal}
+        hardwareAccelerated={true}
+        statusBarTranslucent={true}
       >
         <ContentModal setShowModal={setShowModal} dados={InfortmationText} setDados={setInfortmationText} />
       </Modal>
